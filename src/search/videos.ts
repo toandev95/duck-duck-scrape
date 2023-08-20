@@ -1,5 +1,4 @@
 import { decode } from 'html-entities';
-import needle, { NeedleOptions } from 'needle';
 
 import { DuckbarResponse, DuckbarVideoResult } from '../types';
 import { ensureJSON, getVQD, queryString, SafeSearchType, SearchTimeType } from '../util';
@@ -105,7 +104,7 @@ export interface VideoResult {
 export async function searchVideos(
   query: string,
   options?: VideoSearchOptions,
-  needleOptions?: NeedleOptions
+  needleOptions?: RequestInit
 ): Promise<VideoSearchResults> {
   if (!query) throw new Error('Query cannot be empty!');
   if (!options) options = defaultOptions;
@@ -131,15 +130,11 @@ export async function searchVideos(
     s: String(options.offset || 0)
   };
 
-  const response = await needle(
-    'get',
-    `https://duckduckgo.com/v.js?${queryString(queryObject)}`,
-    needleOptions
-  );
+  const response = await fetch(`https://duckduckgo.com/v.js?${queryString(queryObject)}`, needleOptions);
 
-  if (response.statusCode === 403) throw new Error('A server error occurred!');
+  if (response.status === 403) throw new Error('A server error occurred!');
 
-  const videosResult = ensureJSON(response.body) as DuckbarResponse<DuckbarVideoResult>;
+  const videosResult = ensureJSON(await response.text()) as DuckbarResponse<DuckbarVideoResult>;
 
   return {
     noResults: !videosResult.results.length,

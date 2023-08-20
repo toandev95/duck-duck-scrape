@@ -1,5 +1,4 @@
 import { decode } from 'html-entities';
-import needle, { NeedleOptions } from 'needle';
 
 import { DuckbarImageResult, DuckbarResponse } from '../types';
 import { ensureJSON, getVQD, queryString, SafeSearchType } from '../util';
@@ -148,7 +147,7 @@ export interface ImageSearchResults {
 export async function searchImages(
   query: string,
   options?: ImageSearchOptions,
-  needleOptions?: NeedleOptions
+  needleOptions?: RequestInit
 ): Promise<ImageSearchResults> {
   if (!query) throw new Error('Query cannot be empty!');
   if (!options) options = defaultOptions;
@@ -176,15 +175,11 @@ export async function searchImages(
     s: String(options.offset || 0)
   };
 
-  const response = await needle(
-    'get',
-    `https://duckduckgo.com/i.js?${queryString(queryObject)}`,
-    needleOptions
-  );
+  const response = await fetch(`https://duckduckgo.com/i.js?${queryString(queryObject)}`, needleOptions);
 
-  if (response.statusCode === 403) throw new Error('A server error occurred!');
+  if (response.status === 403) throw new Error('A server error occurred!');
 
-  const imagesResult = ensureJSON(response.body) as DuckbarResponse<DuckbarImageResult>;
+  const imagesResult = ensureJSON(await response.text()) as DuckbarResponse<DuckbarImageResult>;
 
   return {
     noResults: !imagesResult.results.length,
