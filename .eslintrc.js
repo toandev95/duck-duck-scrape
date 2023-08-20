@@ -14,5 +14,8 @@ module.exports = {
         project: './tsconfig.eslint.json'
       }
     }
-  ]
+  ],
+  rules: {
+    'prettier/prettier': [2, { useTabs: false }]
+  }
 };

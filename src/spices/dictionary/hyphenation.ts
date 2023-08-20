@@ -23,7 +23,10 @@ export interface DictionaryHyphenationResult {
  * @param needleOptions The options for the HTTP request
  * @returns The dictionary hyphenation result
  */
-export async function dictionaryHyphenation(word: string, needleOptions?: NeedleOptions): Promise<DictionaryHyphenationResult[]> {
+export async function dictionaryHyphenation(
+  word: string,
+  needleOptions?: NeedleOptions
+): Promise<DictionaryHyphenationResult[]> {
   if (!word) throw new Error('Word cannot be empty!');
 
   const response = await needle('get', `${SPICE_BASE}/dictionary/hyphenation/${word}`, needleOptions);

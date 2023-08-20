@@ -19,16 +19,25 @@ describe('util', () => {
 
   describe('getVQD()', () => {
     it('should get a VQD', async () => {
-      const scope = nock(DDG_HOST).get('/').query({ q: 'node', ia: 'web' }).replyWithFile(200, 'test/__util__/pages/vqd.html');
+      const scope = nock(DDG_HOST)
+        .get('/')
+        .query({ q: 'node', ia: 'web' })
+        .replyWithFile(200, 'test/__util__/pages/vqd.html');
 
       await expect(getVQD('node')).to.eventually.equal(SEARCH_QUERY_VQD);
       scope.done();
     });
 
     it('should error if no VQD was found', async () => {
-      const scope = nock(DDG_HOST).get('/').query({ q: 'node', ia: 'web' }).replyWithFile(200, 'test/__util__/pages/no-vqd.html');
+      const scope = nock(DDG_HOST)
+        .get('/')
+        .query({ q: 'node', ia: 'web' })
+        .replyWithFile(200, 'test/__util__/pages/no-vqd.html');
 
-      await expect(getVQD('node')).to.eventually.be.rejectedWith(Error, 'Failed to get the VQD for query "node".');
+      await expect(getVQD('node')).to.eventually.be.rejectedWith(
+        Error,
+        'Failed to get the VQD for query "node".'
+      );
       scope.done();
     });
   });

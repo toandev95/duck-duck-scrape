@@ -27,7 +27,10 @@ export interface ThesaurusResult {
  * @since v2.2.0
  * @returns The thesaurus result
  */
-export async function thesaurus(word: string, needleOptions?: NeedleOptions): Promise<ThesaurusResult | null> {
+export async function thesaurus(
+  word: string,
+  needleOptions?: NeedleOptions
+): Promise<ThesaurusResult | null> {
   if (!word) throw new Error('Word cannot be empty!');
 
   const response = await needle('get', `${SPICE_BASE}/thesaurus/${word}`, needleOptions);

@@ -1,5 +1,3 @@
-import needle, { NeedleOptions } from 'needle';
-
 /** @internal */
 export const SPICE_BASE = 'https://duckduckgo.com/js/spice';
 /** @internal */
@@ -40,10 +38,10 @@ export function queryString(query: Record<string, string>) {
  * @param options The options of the HTTP request
  * @returns The VQD
  */
-export async function getVQD(query: string, ia = 'web', options?: NeedleOptions) {
+export async function getVQD(query: string, ia = 'web', options?: RequestInit) {
   try {
-    const response = await needle('get', `https://duckduckgo.com/?${queryString({ q: query, ia })}`, options);
-    return VQD_REGEX.exec(response.body)![1];
+    const response = await fetch(`https://duckduckgo.com/?${queryString({ q: query, ia })}`, options);
+    return VQD_REGEX.exec(await response.text())![1];
   } catch (e) {
     throw new Error(`Failed to get the VQD for query "${query}".`);
   }
